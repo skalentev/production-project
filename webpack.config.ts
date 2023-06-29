@@ -1,6 +1,3 @@
-// const path = require('path');
-// const HTMLWebpackPlugin = require('html-webpack-plugin');
-// const webpack = require('webpack')
 import path from 'path';
 import webpack from 'webpack';
 import HTMLWebpackPlugin from 'html-webpack-plugin';
@@ -8,18 +5,24 @@ import {buildPlugins} from "./config/build/buildPlugins";
 import {buildLoaders} from "./config/build/buildLoaders";
 import {buildResolvers} from "./config/build/buildResolvers";
 import {buildWebpackConfig} from "./config/build/buildWebpackConfig";
-import {BuildPaths} from "./config/build/types/config";
-const paths: BuildPaths = {
-    entry: path.resolve(__dirname, 'src','index.ts'),
-    build: path.resolve(__dirname,'build'),
-    html: path.resolve(__dirname,'public','index.html'),
-}
-const mode = 'development';
-const isDev = mode === 'development';
-const config: webpack.Configuration = buildWebpackConfig({
-    mode: "development",
-    paths,
-    isDev
-})
+import {BuildEnv, BuildPaths} from "./config/build/types/config";
 
-export default config;
+
+export default (env: BuildEnv) =>{
+    const paths: BuildPaths = {
+        entry: path.resolve(__dirname, 'src','index.ts'),
+        build: path.resolve(__dirname,'build'),
+        html: path.resolve(__dirname,'public','index.html'),
+    }
+    const mode = env.mode || 'development';
+    const isDev = mode === 'development';
+    const PORT = env.port || 3000;
+    const config: webpack.Configuration = buildWebpackConfig({
+        mode: mode,
+        paths,
+        isDev,
+        port: PORT,
+    })
+
+    return config;
+}
